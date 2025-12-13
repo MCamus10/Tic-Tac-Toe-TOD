@@ -38,8 +38,6 @@ function Gameboard () {
         resetBoard
     };
 };
-const board = Gameboard();
-
 
 function Players (){
     const playerOne = "Player One";
@@ -69,17 +67,8 @@ function Players (){
         getPlayerFromToken
     };
 };
-const players = Players();
 
-
-/* function Cell() {
-    const getCellToken = (row, column) => board.getBoard()[row][column];
-    return {getCellToken};
-};
-const cell = Cell(); */
-
-
-function Winner () {
+function Winner (board, players) {
     //Check if a line has a winner
     const checkLine = (line) => {
         const firstCell = line[0];
@@ -120,11 +109,9 @@ function Winner () {
         
     };
     return {getWinner};
-};
-const winner = Winner();
-    
+};    
 
-function GameController() {
+function GameController(board, players, winner) {
     let gameEnd = false;
     const printBoard = () => { 
         console.log(board.getBoard());
@@ -173,48 +160,62 @@ function GameController() {
 
     return {play, resetGame};
 };
-const game = GameController();
+
+const TicTacToe = (function(){
+    const board = Gameboard();
+    const players = Players();
+    const winner = Winner(board, players);
+    const game = GameController(board, players, winner);
+    
+    return {
+        play: game.play,
+        reset: game.resetGame,
+        getBoard: board.getBoard
+    }
+})();
+
+
 
 //Test tie
-// game.play(0,0);
-// game.play(2,1);
-// game.play(0,1);
-// game.play(0,2);
-// game.resetGame();
-// game.play(1,1);
-// game.play(2,2);
-// game.play(2,0);
-// game.play(1,0);
-// game.play(1,2);
+// TicTacToe.play(0,0);
+// TicTacToe.play(2,1);
+// TicTacToe.play(0,1);
+// TicTacToe.play(0,2);
+// TicTacToe.reset();
+// TicTacT.play(1,1);
+// TicTacT.play(2,2);
+// TicTacT.play(2,0);
+// TicTacT.play(1,0);
+// TicTacT.play(1,2);
 
 //Test row winner
-// game.play(0,0);
-// game.play(1,0);
-// game.play(2,0);
-// game.play(1,1);
-// game.play(2,1);
-// game.play(1,2);
+// TicTacT.play(0,0);
+// TicTacT.play(1,0);
+// TicTacT.play(2,0);
+// TicTacT.play(1,1);
+// TicTacT.play(2,1);
+// TicTacT.play(1,2);
 
 //Test column winner
-// game.play(0,0);
-// game.play(0,1);
-// game.play(2,2);
-// game.play(1,1);
-// game.play(0,2);
-// game.play(2,1);
+// TicTacT.play(0,0);
+// TicTacT.play(0,1);
+// TicTacT.play(2,2);
+// TicTacT.play(1,1);
+// TicTacT.play(0,2);
+// TicTacT.play(2,1);
 
 
 //Test diagonal winner
-// game.play(0,0);
-// game.play(0,1);
-// game.play(1,1);
-// game.play(1,2);
-// game.play(2,2);
+// TicTacT.play(0,0);
+// TicTacT.play(0,1);
+// TicTacT.play(1,1);
+// TicTacT.play(1,2);
+// TicTacT.play(2,2);
 
 //Test anti diagonal winner
-// game.play(0,0);
-// game.play(0,2);
-// game.play(0,1);
-// game.play(1,1);
-// game.play(2,1);
-// game.play(2,0);
+// TicTacT.play(0,0);
+// TicTacT.play(0,2);
+// TicTacT.play(0,1);
+// TicTacT.play(1,1);
+// TicTacT.play(2,1);
+// TicTacT.play(2,0);
