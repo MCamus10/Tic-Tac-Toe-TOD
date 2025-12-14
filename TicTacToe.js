@@ -40,14 +40,17 @@ function Gameboard () {
 };
 
 function Players (){
-    const playerOne = "Player One";
-    const playerTwo = "Player Two";
     const players = [
-        {name: playerOne, token: "X"},
-        {name: playerTwo, token: "O"}
+        {name: "Player One", token: "X"},
+        {name: "Player Two", token: "O"}
     ];
 
     let activePlayer = players[0];
+
+    const setPlayerNames = (playerOneName="Player One", playerTwoName="Player Two") => {
+        players[0].name = playerOneName || "Player One";
+        players[1].name = playerTwoName || "Player Two";
+    };
 
     const getActivePlayerName = () => activePlayer.name
     const getActivePlayerToken = () => activePlayer.token;
@@ -60,11 +63,17 @@ function Players (){
         return player ? player.name : null;
     };
 
+    const resetActivePlayer = () => {
+        activePlayer = players[0];
+    }
+
     return {
         getActivePlayerName, 
         switchActivePlayer, 
         getActivePlayerToken, 
-        getPlayerFromToken
+        getPlayerFromToken,
+        setPlayerNames,
+        resetActivePlayer
     };
 };
 
@@ -113,6 +122,8 @@ function Winner (board, players) {
 
 function GameController(board, players, winner) {
     let gameEnd = false;
+    const checkGameEnd = () => gameEnd;
+        
     const printBoard = () => { 
         console.log(board.getBoard());
     };
@@ -123,16 +134,19 @@ function GameController(board, players, winner) {
     const play = (row, column) => {
         if (gameEnd) {
             console.log("Game has already ended!");
-            return false;
+            return true;
         }
 
         if (board.getCellValue(row, column) !== 0) {
             console.log("Choose another cell!");
-            return false;
+            return true;
         }
 
-        board.setCellValue(row, column, players.getActivePlayerToken());
-        printBoard();    
+        if (!gameEnd) {
+            board.setCellValue(row, column, players.getActivePlayerToken());
+            printBoard();
+        }
+            
         
         const winnerName = winner.getWinner();
         if (winnerName) {
@@ -154,27 +168,37 @@ function GameController(board, players, winner) {
     const resetGame = () => {
         board.resetBoard();
         gameEnd = false;
+        players.resetActivePlayer();
         console.log("Game reset");
         printBoard()
     };
 
-    return {play, resetGame};
+    return {play, resetGame, checkGameEnd};
 };
 
 const TicTacToe = (function(){
     const board = Gameboard();
     const players = Players();
     const winner = Winner(board, players);
-    const game = GameController(board, players, winner);
+    let game = null;
+
+    const startGame = () => {
+        game = GameController(board, players, winner);
+
+    };
     
     return {
-        play: game.play,
-        reset: game.resetGame,
-        getBoard: board.getBoard
+        play: (row,col) => game?.play(row, col),
+        startGame,
+        setNames: players.setPlayerNames,
+        reset: () => game?.resetGame(),
+        getBoard: board.getBoard,
+        getActivePlayerToken: players.getActivePlayerToken,
+        checkGameEnd: () => game ? game.checkGameEnd() : false     
     }
 })();
 
-
+export default TicTacToe;
 
 //Test tie
 // TicTacToe.play(0,0);
