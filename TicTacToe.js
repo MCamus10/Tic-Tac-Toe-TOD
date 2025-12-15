@@ -105,7 +105,6 @@ function Winner (board, players) {
             if (winner) return players.getPlayerFromToken(winner);
         };
     
-
         //Verify main diagonal
         const mainDiagonal = boardData.map((row, i) => row[i]);
         const mainWinner = checkLine(mainDiagonal);
@@ -133,36 +132,31 @@ function GameController(board, players, winner) {
 
     const play = (row, column) => {
         if (gameEnd) {
-            console.log("Game has already ended!");
-            return true;
+            return {status: "ended", message: "Please start new game"};
         }
 
         if (board.getCellValue(row, column) !== 0) {
-            console.log("Choose another cell!");
-            return true;
+            return {status: "invalid", message: "Choose another cell!"};
         }
 
-        if (!gameEnd) {
-            board.setCellValue(row, column, players.getActivePlayerToken());
-            printBoard();
-        }
-            
-        
+        board.setCellValue(row, column, players.getActivePlayerToken());
+
         const winnerName = winner.getWinner();
         if (winnerName) {
-            console.log(`${winnerName} wins!`)
             gameEnd = true;
-            return true;
+            return {status: "win", message: `${winnerName} wins!`};
         };
         
         if (board.isBoardComplete()){
-            console.log("Tie! Game end!");
             gameEnd = true;
-            return true;
+            return {status: "tie", message: "Tie game!"};
         };
 
         players.switchActivePlayer();
-        console.log(`It's ${players.getActivePlayerName()}'s turn`);
+        return {
+            status: "next",
+            message: `It's ${players.getActivePlayerName()}'s turn`
+        };
     };
 
     const resetGame = () => {
@@ -194,6 +188,7 @@ const TicTacToe = (function(){
         reset: () => game?.resetGame(),
         getBoard: board.getBoard,
         getActivePlayerToken: players.getActivePlayerToken,
+        getActivePlayerName: players.getActivePlayerName,
         checkGameEnd: () => game ? game.checkGameEnd() : false     
     }
 })();

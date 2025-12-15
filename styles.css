@@ -7,7 +7,7 @@
 body {
     margin: 0;
     display: grid;
-    grid-template-rows: 150px 1fr;
+    grid-template-rows: 150px 20px 1fr;
 }
 
 header {
@@ -57,9 +57,28 @@ button:hover {
     border: 2px solid black;
     display: flex;
     justify-content: center;
-    align-items: center;   
+    align-items: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;   
 }
 
 .board-cell:hover {
     cursor: pointer;
+}
+
+.board-cell.x {
+    background-image: url("./images/X.png");
+}
+
+.board-cell.o {
+    background-image: url("./images/O.png");
+}
+
+#game-status-output {
+    display: flex;
+    justify-content: center;
+    margin: 20px;
+    font-size: 1.5rem;
+    font-weight: 600;
 }

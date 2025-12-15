@@ -12,18 +12,19 @@ const playerTwoInput = document.getElementById("player-two-name");
 const saveNameBtn = document.getElementById("save-name-btn");
 saveNameBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    // const playerOneName = playerOneInput.value.trim();
-    // const playerTwoName = playerTwoInput.value.trim();
-    // TicTacToe.setNames(playerOneName, playerTwoName);
+    const playerOneName = playerOneInput.value.trim();
+    const playerTwoName = playerTwoInput.value.trim();
+    TicTacToe.setNames(playerOneName, playerTwoName);
     TicTacToe.startGame();
     renderBoard();
+    renderStatus(`It's ${TicTacToe.getActivePlayerName()}'s turn`);
     playerNamesDialog.close();
 });
 
 const everyCell = document.getElementsByClassName("board-cell");
 newGameBtn.addEventListener("click", () => {
     TicTacToe.reset()
-    // everyCell.forEach(cell => cell.textContent ="");
+    renderStatus(`It's ${TicTacToe.getActivePlayerName()}'s turn`);
     renderBoard();
 });
 
@@ -38,9 +39,12 @@ function renderBoard() {
     cells.forEach(cell => {
        const row = Number(cell.dataset.row);
        const col = Number(cell.dataset.col); 
-
        const value = board[row][col];
-       cell.textContent = value === 0 ? "" : value;
+
+       cell.classList.remove("x", "o");
+       
+       if (value ==="X") cell.classList.add("x");
+       if (value ==="O") cell.classList.add("o");
     });
 }
 
@@ -50,19 +54,16 @@ boardElement.addEventListener("click", (e) =>{
 
     const row = Number(cell.dataset.row);
     const col = Number(cell.dataset.col);
-    
-    // if (!TicTacToe.checkGameEnd()) {
-    //     cell.textContent = TicTacToe.getActivePlayerToken();
-    //     TicTacToe.play(row, col);
-    //     console.log(TicTacToe.checkGameEnd());
-    // }
 
-    if (TicTacToe.checkGameEnd()) return;
-    TicTacToe.play(row, col);
+    const result = TicTacToe.play(row, col);
+    if(!result) return;
+
     renderBoard();
-    
-    
-})
+    renderStatus(result.message);
+});
 
-
-window.TicTacToe = TicTacToe;
+//Messages output
+const gameStatus = document.getElementById("game-status-output");
+function renderStatus(message) {
+    gameStatus.textContent = message;
+};
